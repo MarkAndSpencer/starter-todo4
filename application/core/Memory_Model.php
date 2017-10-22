@@ -2,9 +2,9 @@
 
 /**
  * Generic data access model, with data stored in memory only.
- * 
+ *
  * Single "key" only, at this point.
- * 
+ *
  * Provide additional base models for different persistence choices
  * by extending this, and over-riding the load() and store() methods.
  *
@@ -158,7 +158,7 @@ class Memory_Model extends CI_Model implements DataMapper
 		// convert object from associative array, if needed
 		$record = (is_array($record)) ? (object) $record : $record;
 		// update the collection appropriately
-		$key = $data->{$this->_keyfield};
+		$key = $record->{$this->_keyfield};
 		if (isset($this->_data[$key]))
 		{
 			$this->_data[$key] = $record;
@@ -207,7 +207,7 @@ class Memory_Model extends CI_Model implements DataMapper
 
 	/**
 	 *  Return filtered records as an array of records.
-	 * 
+	 *
 	 * @param type $what	Field name to select by
 	 * @param type $which	Value to select
 	 * @return type
