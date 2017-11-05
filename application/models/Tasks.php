@@ -48,6 +48,10 @@ class Tasks extends CSV_Model
         return $config;
     }
 
+    public function getAllTasks() {
+        return $this->all();
+    }
+
 }
 
 function orderByCategory($a, $b)
