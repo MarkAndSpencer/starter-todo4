@@ -95,6 +95,6 @@ class TaskTest extends TestCase
         $task = $this->CI->task->create();
 
         $this->expectException(Exception::class);
-        $task->group = 4;
+        $task->group = 5;
     }
 }

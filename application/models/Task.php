@@ -14,9 +14,29 @@ class Task extends CI_Model
 
     //provide this for now
     //creates a new task
-    public function create()
+    public function create($taskObj = null)
     {
-        return new Task;
+        if ($taskObj === null)
+            return new Task;
+
+        $task = new Task;
+        
+        foreach($this->schema() as $field) {
+            if (property_exists($taskObj, $field)) {
+                $val = $taskObj->$field;
+
+                if (is_numeric($val))
+                    $val = intval($val);
+
+                $task->$field = $val;
+            }
+        }
+        return $task;
+    }
+
+    public function schema()
+    {
+        return array('id','task','priority','size','group','deadline','status','flag');
     }
 
     // If this class has a setProp method, use it, else modify the property directly
@@ -34,7 +54,9 @@ class Task extends CI_Model
 
         //otherwise validate the property
         if (!$this->validate($key, $value)) {
-            throw new Exception('Property does not validate: ' . $key . ' => ' . $value);
+            $isstr = is_string($value);
+            throw new Exception('Property does not validate: ' . $key . ' => ' . $value
+                . 'test: ' . intval('COMPSTUMP'));
         }
         $this->$key = $value;
         return $this;
@@ -43,7 +65,10 @@ class Task extends CI_Model
     private function validate($key, $value)
     {
         $rules = $this->rules();
-        return call_user_func($rules[$key], $value);
+        if (array_key_exists($key, $rules))
+            return call_user_func($rules[$key], $value);
+
+        return true;
     }
 
     // provide entity validation rules
@@ -53,7 +78,7 @@ class Task extends CI_Model
             'task' => function($value) { return is_string($value) && strlen($value) < 64; },
             'priority' => function($value) { return is_int($value) && $value < 4; },
             'size' => function($value) { return is_int($value) && $value < 4; },
-            'group' => function($value) { return is_int($value) && $value < 4; },
+            'group' => function($value) { return is_int($value) && $value < 5; },
         );
         return $config;
     }

@@ -18,22 +18,16 @@ class Tasks extends CSV_Model
         // extract the undone tasks
         foreach ($this->all() as $task)
         {
-            if ($task->status != 2)
+            if ($task->status != 2) {
+                $task->group = $this->app->group($task->group);
                 $undone[] = $task;
+            }
         }
-
-        // substitute the category name, for sorting
-        foreach ($undone as $task)
-            $task->group = $this->app->group($task->group);
 
         // order them by category
         usort($undone, "orderByCategory");
 
-        // convert the array of task objects into an array of associative objects
-        foreach ($undone as $task)
-            $converted[] = (array) $task;
-
-        return $converted;
+        return $undone;
     }
 
     // provide form validation rules
@@ -48,8 +42,23 @@ class Tasks extends CSV_Model
         return $config;
     }
 
-    public function getAllTasks() {
+    public function getAllTasks()
+    {
         return $this->all();
+    }
+
+    public function all()
+    {
+        $ret = array();
+        foreach (parent::all() as $t) {
+            $ret[$t->id] = $this->task->create($t);
+        }
+        return $ret;
+    }
+
+    public function get($id, $key2 = null)
+    {
+        return $this->task->create(parent::get($id, $key2));
     }
 
 }
