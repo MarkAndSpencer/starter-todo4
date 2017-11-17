@@ -74,7 +74,7 @@ class Mtce extends Application {
     public function add()
     {
         $task = $this->tasks->create();
-        $this->session->set_userdata('task', $task);
+        $this->session->set_userdata('task', (object) $task);
         $this->showit();
     }
 
@@ -83,7 +83,7 @@ class Mtce extends Application {
         if ($id == null)
             redirect('/mtce');
         $task = $this->tasks->get($id);
-        $this->session->set_userdata('task', $task);
+        $this->session->set_userdata('task', (object) $task);
         $this->showit();
     }
 
@@ -119,10 +119,11 @@ class Mtce extends Application {
         $this->load->library('form_validation');
         $this->form_validation->set_rules($this->tasks->rules());
 
+        $task = $this->session->userdata('task');
         // retrieve & update data transfer buffer
-        $task = (array) $this->session->userdata('task');
+        $task = (array) $task;
         $task = array_merge($task, $this->input->post());
-        $task = (object) $task;  // convert back to object
+        $task = $this->task->create((object)$task);  // convert back to object
         $this->session->set_userdata('task', (object) $task);
 
         // validate away
@@ -130,7 +131,7 @@ class Mtce extends Application {
         {
             if (empty($task->id))
             {
-                                $task->id = $this->tasks->highest() + 1;
+                $task->id = $this->tasks->highest() + 1;
                 $this->tasks->add($task);
                 $this->alert('Task ' . $task->id . ' added', 'success');
             } else
@@ -157,11 +158,9 @@ class Mtce extends Application {
     }
 
     // Delete this item altogether
-    function delete()
+    function delete($id = -1)
     {
-        $dto = $this->session->userdata('task');
-        $task = $this->tasks->get($dto->id);
-        $this->tasks->delete($task->id);
+        $this->tasks->delete($id);
         $this->session->unset_userdata('task');
         redirect('/mtce');
     }
