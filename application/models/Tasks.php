@@ -3,14 +3,14 @@
 /**
 * Model for Tasks on the todo list
 */
-class Tasks extends CSV_Model
+class Tasks extends XML_Model
 {
     /**
     * ctor
     */
     public function __construct()
     {
-        parent::__construct(APPPATH . '../data/tasks.csv', 'id');
+        parent::__construct(APPPATH . '../data/tasks.xml', 'id');
     }
 
     function getCategorizedTasks()
