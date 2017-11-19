@@ -1,7 +1,7 @@
 <?php
 
 /**
- * CSV-persisted collection.
+ * XML-persisted collection.
  *
  * ------------------------------------------------------------------------
  */
@@ -13,7 +13,7 @@ class XML_Model extends Memory_Model
 
     /**
      * Constructor.
-     * @param string $origin Filename of the CSV file
+     * @param string $origin Filename of the XML file
      * @param string $keyfield  Name of the primary key field
      * @param string $entity    Entity name meaningful to the persistence
      */
