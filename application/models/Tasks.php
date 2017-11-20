@@ -10,7 +10,7 @@ class Tasks extends XML_Model
     */
     public function __construct()
     {
-        parent::__construct(APPPATH . '../data/tasks.xml', 'id');
+        parent::__construct(APPPATH . '../data/tasks.xml', 'id', 'Task');
     }
 
     function getCategorizedTasks()
