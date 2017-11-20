@@ -30,10 +30,11 @@ class XML_Model extends Memory_Model
         // remember the other constructor fields
         $this->_keyfield = $keyfield;
         $this->_entity = $entity;
-
+        if($entity !== null)
+            $this->load->model($entity);
         // start with an empty collection
         $this->_data = array(); // an array of objects
-        $this->fields = array(); // an array of strings
+        $this->_fields = array(); // an array of strings
         // and populate the collection
         $this->load();
     }
@@ -47,7 +48,7 @@ class XML_Model extends Memory_Model
         //---------------------
         if (($xml = simplexml_load_file($this->_origin)) !== FALSE)
         {
-            $record = new stdClass();
+            $record = $this->buildEntity();
             $this->loadChildElements($xml, $record);
         }
         // --------------------
@@ -64,8 +65,10 @@ class XML_Model extends Memory_Model
         $hasChildren = FALSE;
         foreach($parent as $key => $value) {
             $hasChildren = TRUE;
-            $record = new stdClass();
+            $record = $this->buildEntity();
             if($this->loadChildElements($value, $record) === FALSE) {
+                if(!in_array($key, $this->_fields))
+                    array_push($this->_fields, $key);
                 $item->$key = (string) $value;
             } else {
                 $key = $record->{$this->_keyfield};
@@ -73,5 +76,23 @@ class XML_Model extends Memory_Model
             }
         }
         return $hasChildren;
+    }
+
+    protected function store() {
+        $xml = new SimpleXMLElement('<' . static::class. '></' . static::class . '>');
+        foreach($this->_data as $key => $record) {
+            $xmlRecord = $xml->addChild($this->_entity);
+            foreach($record as $id => $value) {
+                $xmlRecord->addChild($id, htmlspecialchars($value));
+            }
+        }
+        file_put_contents($this->_origin, $xml->asXML());
+    }
+
+    public function buildEntity() {
+        if($this->_entity === null)
+            return new stdClass();
+        $entity = $this->_entity;
+        return new $entity();
     }
 }

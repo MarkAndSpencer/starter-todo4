@@ -20,7 +20,7 @@ class Task extends CI_Model
             return new Task;
 
         $task = new Task;
-        
+
         foreach($this->schema() as $field) {
             if (property_exists($taskObj, $field)) {
                 $val = $taskObj->$field;
@@ -76,11 +76,10 @@ class Task extends CI_Model
     {
         $config = array(
             'task' => function($value) { return is_string($value) && strlen($value) < 64; },
-            'priority' => function($value) { return is_int($value) && $value < 4; },
-            'size' => function($value) { return is_int($value) && $value < 4; },
-            'group' => function($value) { return is_int($value) && $value < 5; },
+            'priority' => function($value) { return intval($value) != 0 && intval($value) < 4; },
+            'size' => function($value) { return intval($value) != 0 && intval($value) < 4; },
+            'group' => function($value) { return intval($value) != 0 && intval($value) < 5; },
         );
         return $config;
     }
 }
-
